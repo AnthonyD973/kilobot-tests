@@ -54,11 +54,6 @@ function(kilobot_add_executable _TARGET)
     PROPERTIES
     COMPILE_FLAGS "${AVR_CFLAGS}"
     LINK_FLAGS "${AVR_LDFLAGS} ${AVR_LDEXTRAFLAGS} -Wl,-Map,${_MAP_TARGET}")
-    message("
-  set_target_properties(${_ELF_TARGET}
-    PROPERTIES
-    COMPILE_FLAGS \"${AVR_CFLAGS}\"
-    LINK_FLAGS \"${AVR_LDFLAGS} ${AVR_LDEXTRAFLAGS}\")")
 
   # Make target
   add_custom_target(${_TARGET} ALL DEPENDS ${_LSS_TARGET} ${_HEX_TARGET} ${_EEP_TARGET} ${_BIN_TARGET})
@@ -70,6 +65,13 @@ function(kilobot_add_executable _TARGET)
     ${AVR_UPLOAD} -p ${AVR_DEVICE} -P ${AVR_PORT} -c avrispmkII -U "flash:w:${_HEX_TARGET}:i"
     DEPENDS ${_HEX_TARGET}
     COMMENT "Uploading ${_HEX_TARGET} to Kilobot")
+
+  # Uploading/Initializing EEPROM
+  add_custom_target(eep_upload_${_TARGET}
+    ${AVR_UPLOAD} -p ${AVR_DEVICE} -P ${AVR_PORT} -c avrispmkII -U "eeprom:w:${_EEP_TARGET}:i"
+    DEPENDS ${_EEP_TARGET}
+    COMMENT "Uploading EEPROM data from ${_HEX_TARGET} to Kilobot")
+
   # Extra files to clean
   get_directory_property(_CLEAN_FILES ADDITIONAL_MAKE_CLEAN_FILES)
   set_directory_properties(
@@ -104,3 +106,4 @@ endfunction(kilobot_target_link_libraries _TARGET)
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/kilolib")
 add_subdirectory(read_flash_data)
+add_subdirectory(wrap_eeprom_data)

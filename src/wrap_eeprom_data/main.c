@@ -1,8 +1,5 @@
 #include <kilolib.h>
-#include <avr/pgmspace.h>
-
-#define LED_SECTION_START 0x2001
-
+#include <avr/eeprom.h>
 
 #define OFF     0
 #define RED     1
@@ -15,10 +12,8 @@
 
 #define TBL_SZ 8
 
-// Place that table in the ".led" section, which
-// we will configure to be in the flash at address LED_SECTION_START.
-__attribute__((section(".led")))
-const uint8_t my_str[TBL_SZ] = { RED, GREEN, BLUE, OFF, YELLOW, MAGENTA, CYAN, WHITE };
+// Place that table in the ".eeprom" section
+EEMEM const uint8_t my_str[TBL_SZ] = { WHITE, CYAN, MAGENTA, YELLOW, OFF, BLUE, GREEN, RED };
 
 /**
  * @brief Set the LED's color.
@@ -32,10 +27,11 @@ void led(uint8_t color) {
 }
 
 int main() {
+
     while (1) {
-    // Read the colors from the flash and set them.
+        // Read the colors from the flash and set them.
         for (uint8_t i = 0; i < TBL_SZ; ++i) {
-            uint8_t curr_color = pgm_read_byte(LED_SECTION_START + i);
+            uint8_t curr_color = my_str[i];
             led(curr_color);
             delay(500);
         }
