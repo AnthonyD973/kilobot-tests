@@ -15,10 +15,17 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR avr)
 set(CMAKE_C_COMPILER ${AVR_CC})
 
+#
+# AVR variables
+#
+set(AVR_MCU "atmega328p")    # MCU for avr-gcc
+set(AVR_DEVICE "m328p")      # device for avrdude -p
+set(AVR_PORT "usb")          # port for avrdude -P
+set(AVR_BOOTLOADER "0x7000") # section start for bootloader code
+
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
-#set(CMAKE_C_FLAGS " -std=c99")
-set(AVR_CFLAGS "-std=c99 -mmcu=atmega328p -Wall -Os -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -fno-strict-aliasing -DF_CPU=8000000")
-set(AVR_LDFLAGS "-mmcu=atmega328p -Wall -Wl,-s -Wl,--gc-sections")
+set(AVR_CFLAGS "-std=c99 -mmcu=${AVR_MCU} -Wall -Os -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -fno-strict-aliasing -DF_CPU=8000000")
+set(AVR_LDFLAGS "-mmcu=${AVR_MCU} -Wall -Wl,-s -Wl,--gc-sections")
 set(AVR_LDEXTRAFLAGS "") # For target-dependent sections
 
 #
@@ -70,7 +77,7 @@ function(kilobot_add_executable _TARGET)
   add_custom_target(eep_upload_${_TARGET}
     ${AVR_UPLOAD} -p ${AVR_DEVICE} -P ${AVR_PORT} -c avrispmkII -U "eeprom:w:${_EEP_TARGET}:i"
     DEPENDS ${_EEP_TARGET}
-    COMMENT "Uploading EEPROM data from ${_HEX_TARGET} to Kilobot")
+    COMMENT "Uploading EEPROM data from ${_EEP_TARGET} to Kilobot")
 
   # Extra files to clean
   get_directory_property(_CLEAN_FILES ADDITIONAL_MAKE_CLEAN_FILES)

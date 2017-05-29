@@ -1,19 +1,21 @@
 #include <kilolib.h>
 #include <avr/eeprom.h>
 
-#define OFF     0
-#define RED     1
-#define GREEN   2
-#define BLUE    4
-#define YELLOW  RED + GREEN
-#define MAGENTA RED + BLUE
-#define CYAN    GREEN + BLUE
-#define WHITE   RED + GREEN + BLUE
+#define EEPROM_MY_SECTION_START 0x00
+
+#define O  0            // OFF
+#define R  1            // Red
+#define G  2            // Green
+#define B  4            // Blue
+#define C (G + B)       // Cyan
+#define M (R + B)       // Magenta
+#define Y (R + G)       // Yellow
+#define W (R + G + B)   // White
 
 #define TBL_SZ 8
 
 // Place that table in the ".eeprom" section
-EEMEM const uint8_t my_str[TBL_SZ] = { WHITE, CYAN, MAGENTA, YELLOW, OFF, BLUE, GREEN, RED };
+EEMEM volatile const uint8_t my_str[TBL_SZ] = { W, Y, M, C, O, B, G, R };
 
 /**
  * @brief Set the LED's color.
@@ -31,7 +33,8 @@ int main() {
     while (1) {
         // Read the colors from the flash and set them.
         for (uint8_t i = 0; i < TBL_SZ; ++i) {
-            uint8_t curr_color = my_str[i];
+            eeprom_busy_wait();
+            uint8_t curr_color = eeprom_read_byte((const uint8_t*)&my_str[i]);
             led(curr_color);
             delay(500);
         }
