@@ -24,7 +24,7 @@ set(AVR_PORT "usb")          # port for avrdude -P
 set(AVR_BOOTLOADER "0x7000") # section start for bootloader code
 
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
-set(AVR_CFLAGS "-std=c99 -mmcu=${AVR_MCU} -Wall -Os -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -fno-strict-aliasing -DF_CPU=8000000")
+set(AVR_CFLAGS "-std=c99 -mmcu=${AVR_MCU} -Wall -Os -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -fno-strict-aliasing -ffunction-sections -DF_CPU=8000000")
 set(AVR_LDFLAGS "-mmcu=${AVR_MCU} -Wall -Wl,-s -Wl,--gc-sections")
 set(AVR_LDEXTRAFLAGS "") # For target-dependent sections
 

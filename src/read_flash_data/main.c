@@ -47,7 +47,7 @@ int main() {
     while (1) {
     // Read the colors from the flash and set them.
         for (uint16_t i = 0; i < TBL_SZ; ++i) {
-            uint16_t curr_color = pgm_read_word(LED_SECTION_START + sizeof(my_str[0])*i);
+            uint16_t curr_color = pgm_read_word((uint16_t)&my_str + sizeof(*my_str)*i);
             led(curr_color);
             delay(10);
         }
